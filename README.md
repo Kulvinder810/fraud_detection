@@ -85,16 +85,14 @@ kafka-topics --list --bootstrap-server localhost:9092
 ❌ Databricks not receiving messages?
 ✔️ Check if the consumer script is properly consuming from Kafka by running it manually in Databricks.
 
-📜 License
-📝 This project is open-source under the MIT License.
 
 💡 Contributing
 🚀 Contributions are welcome! Feel free to submit a pull request or open an issue if you find any bugs or have feature requests.
 
 👨‍💻 Author
-👤 Your Name
-🔗 GitHub Profile
-✉️ Contact: your.email@example.com
+👤 Kulvinder Singh
+🔗 github.com/Kulvinder810/
+✉️ Contact: kuls810@gmail.com
 
 🎉 Happy Coding! 🚀🔥
 Let me know if you need any modifications or improvements! 🚀
