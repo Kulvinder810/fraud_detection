@@ -3,19 +3,24 @@ import json
 import random
 import time
 from faker import Faker
-import datetime as dt
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+import  config
 
 fake = Faker()
 conf={
-    'bootstrap.servers':'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', #the server endpoint goes here
+    'bootstrap.servers':config.KAFKA_SERVER, #the server endpoint goes here
     'security.protocol':'SASL_SSL',
     'sasl.mechanism':'PLAIN',
-    'sasl.username':'XXXXXXXXXXXX',  #api key goes here
-    'sasl.password':'XXXXXXXXXXXXXXX', #api key secret goes here
+    'sasl.username': config.KAFKA_API_KEY,  #api key goes here
+    'sasl.password':config.KAFKA_API_SECRET, #api key secret goes here
     'client.id':'XXXXXXXXXXX' #client id like John's pc etc 
 }
 
-KAFKA_TOPIC = "transactions"   
+topic=config.KAFKA_TOPIC
 
 producer=Producer(conf)
 
@@ -40,6 +45,6 @@ def acked(err,msg):
 while True:
     transaction = generate_transaction()
     json_data=json.dumps(transaction)
-    producer.produce(KAFKA_TOPIC,key=transaction['transaction_id'],value=json_data,callback=acked)
+    producer.produce(topic,key=transaction['transaction_id'],value=json_data,callback=acked)
     print(f"Sent: {transaction}")
     time.sleep(1)  # Sending 1 transaction per second
