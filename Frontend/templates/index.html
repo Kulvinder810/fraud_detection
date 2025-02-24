@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fraud Detection Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo {
+            display: block;
+            margin: 0 auto 15px;
+            max-width: 180px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        
+        th,
+        td {
+            padding: 6px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            white-space: nowrap;
+        }
+        
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .chart-container {
+            margin-top: 40px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Company Logo -->
+        <img src="data:image/png;base64,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"
+            class="logo" alt="Company Logo">
+
+        <!-- Header -->
+        <div class="header">
+            <h2>Fraud Detection Dashboard</h2>
+            <p class="text-muted">Monitor suspicious transactions in real time</p>
+        </div>
+
+        <!-- Fraud Transactions Table -->
+        <h4>Fraud Transactions</h4>
+        <!-- Fraud Transactions by Location Chart -->
+        <!-- <div id="fraudTreemap" style="height: 400px;"></div> -->
+        <div class="card p-3">
+            <h5 class="text-center">Top 10 Fraud Locations</h5>
+            <canvas id="fraudTopChart"></canvas>
+        </div>
+        <!-- Fraud Transactions Table -->
+        <div class="table-container">
+            <table class="table table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Transaction ID</th>
+                        <th>User ID</th>
+                        <th>Amount ($)</th>
+                        <th>Location</th>
+                        <th>Device_ID</th>
+                        <th>Timestamp</th>
+
+                    </tr>
+                </thead>
+                <tbody id="fraudTable">
+                    <!-- Data will be inserted dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Fraud Transactions Summary -->
+        <p id="totalRows" class="text-muted text-center mt-3"></p>
+
+        <!-- Pagination Controls -->
+        <nav>
+            <ul class="pagination justify-content-center">
+                <li class="page-item">
+                    <button class="btn btn-primary" id="prevPage">Previous</button>
+                </li>
+                <li class="page-item">
+                    <span id="pageNumber" class="btn btn-light"></span>
+                </li>
+                <li class="page-item">
+                    <button class="btn btn-primary" id="nextPage">Next</button>
+                </li>
+            </ul>
+        </nav>
+
+
+
+    </div>
+
+    <script>
+        let fraudData = [];
+        let currentPage = 1;
+        const rowsPerPage = 10;
+
+        async function fetchFraudData(retries = 3) {
+            try {
+                const response = await fetch('/fraud-data');
+                if (!response.ok) throw new Error("Failed to fetch data");
+
+                const data = await response.json();
+                fraudData = data.data;
+
+                if (fraudData.length === 0) {
+                    document.getElementById("fraudTable").innerHTML =
+                        `<tr><td colspan="5" class="text-center text-muted">No fraud transactions found</td></tr>`;
+                    document.getElementById("totalRows").innerText = "Total Fraud Transactions: 0";
+
+                    renderTopFraudChart({}); // Show an empty chart if no data
+                    return;
+                }
+
+                updateTable();
+                renderTopFraudChart();
+
+            } catch (error) {
+                console.error(`Error fetching fraud data (Attempts left: ${retries}):`, error);
+
+                if (retries > 0) {
+                    setTimeout(() => fetchFraudData(retries - 1), 1000); // Retry after 1 sec
+                } else {
+                    document.getElementById("fraudTable").innerHTML =
+                        `<tr><td colspan="5" class="text-center text-danger">Error loading data</td></tr>`;
+                    document.getElementById("totalRows").innerText = "Failed to load data.";
+                    renderTopFraudChart({});
+                }
+            }
+        }
+
+        // Call fetchFraudData when the page loads
+        document.addEventListener("DOMContentLoaded", () => fetchFraudData());
+
+        function updateTable() {
+            const tableBody = document.querySelector("#fraudTable");
+            tableBody.innerHTML = "";
+
+            const totalRows = fraudData.length;
+            const totalPages = Math.ceil(totalRows / rowsPerPage);
+
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+            const pageData = fraudData.slice(start, end);
+
+            pageData.forEach(row => {
+                let tr = document.createElement("tr");
+                tr.innerHTML = `<td>${row.transaction_id}</td>
+                        <td>${row.user_id}</td>
+                        <td>$${row.amount.toFixed(2)}</td>
+                        <td>${row.location}</td>
+                        <td>${row.device_id}</td>
+                        <td>${row.timestamp}</td>
+                        `;
+                tableBody.appendChild(tr);
+            });
+
+            // Update pagination details
+            document.getElementById("pageNumber").innerText = `Page ${currentPage} of ${totalPages}`;
+            document.getElementById("totalRows").innerText = `Total Fraud Transactions: ${totalRows}`;
+
+            // Disable pagination buttons accordingly
+            document.getElementById("prevPage").disabled = (currentPage === 1);
+            document.getElementById("nextPage").disabled = (currentPage >= totalPages);
+        }
+
+
+        document.getElementById("prevPage").addEventListener("click", () => {
+            if (currentPage > 1) {
+                currentPage--;
+                updateTable();
+            }
+        });
+
+        document.getElementById("nextPage").addEventListener("click", () => {
+            if (currentPage * rowsPerPage < fraudData.length) {
+                currentPage++;
+                updateTable();
+            }
+        });
+
+        function renderTopFraudChart() {
+            if (!fraudData || fraudData.length === 0) {
+                console.warn("No fraud data available for chart.");
+                document.getElementById("fraudTopChart").innerHTML =
+                    "<p class='text-center text-muted'>No fraud data available for visualization.</p>";
+                return;
+            }
+
+            const fraudByLocation = {};
+
+            // Aggregate fraud cases by location
+            fraudData.forEach(row => {
+                fraudByLocation[row.location] = (fraudByLocation[row.location] || 0) + 1;
+            });
+
+            // Sort locations by fraud count in descending order and pick the top 10
+            const sortedLocations = Object.entries(fraudByLocation)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10);
+
+            const labels = sortedLocations.map(([location]) => location);
+            const values = sortedLocations.map(([, count]) => count);
+
+            const ctx = document.getElementById('fraudTopChart').getContext('2d');
+
+            // Destroy previous chart instance to prevent duplicate rendering
+            if (window.fraudTopChartInstance) {
+                window.fraudTopChartInstance.destroy();
+            }
+
+            // Create the bar chart
+            window.fraudTopChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Top 10 Fraud Locations',
+                        data: values,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(255, 206, 86, 0.7)',
+                            'rgba(75, 192, 192, 0.7)',
+                            'rgba(153, 102, 255, 0.7)',
+                            'rgba(255, 159, 64, 0.7)',
+                            'rgba(199, 199, 199, 0.7)',
+                            'rgba(83, 102, 255, 0.7)',
+                            'rgba(255, 102, 255, 0.7)',
+                            'rgba(102, 255, 178, 0.7)'
+                        ],
+                        borderColor: 'rgba(0, 0, 0, 0.1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }, // Hide legend for a cleaner look
+                        tooltip: {
+                            enabled: true
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0 // Ensures whole numbers
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+
+        fetchFraudData();
+    </script>
+
+</body>
+
+</html>
