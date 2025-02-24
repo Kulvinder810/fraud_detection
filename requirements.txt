@@ -1,0 +1,13 @@
+# Backend (FastAPI)
+fastapi
+uvicorn
+sqlalchemy
+psycopg2
+
+# Frontend (Flask)
+flask
+flask-cors
+
+# Spark Jobs (Databricks)
+pyspark
+pandas
