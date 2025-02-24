@@ -1,120 +1,135 @@
-# 🚀 Real-Time Data Pipeline with Kafka, Spark, and Databricks
+# 🚀 Real-Time Fraud Detection Dashboard
 
-A scalable **real-time data pipeline** using **Confluent Kafka** as a message broker, a **Python Producer** to simulate transactions, and a **Databricks Consumer** to process the data.
+This project is a **Real-Time Fraud Detection System** that processes streaming data from **Confluent Kafka**, performs analysis using **Apache Spark on Databricks**, and visualizes the fraud patterns using a **Flask + FastAPI frontend** with interactive charts.
 
 ---
 
-## 📂 Project Structure
+## 📌 Features
+
+✅ **Real-time fraud detection** using Kafka and Spark  
+✅ **Top-N Fraud Locations** bar chart using **Chart.js**  
+✅ **Responsive UI** with Bootstrap for smooth resizing  
+✅ **Dynamic Table with Pagination & Scroll**  
+✅ **Backend with FastAPI + PostgreSQL (AWS RDS)**  
+✅ **Dark Mode support** for a modern look  
+
+---
+
+## 🏗️ Project Structure
 
 ```
-/project-root/
-│── producer/           # Python Kafka Producer
-│   ├── producer.py     # Sends messages to Kafka (Confluent)
-│── consumer/           # Databricks Consumer
-│   ├── consumer.py     # Reads and processes messages
-│── config/             # Stores configuration settings
-│   ├── config.py       # User-defined settings (Kafka, Database)
-│── requirements.txt    # Python dependencies
-│── README.md           # Project documentation
-│── .gitignore          # Ignore unnecessary files
+fraud-detection-dashboard/
+│-- backend/                    # FastAPI Backend
+│   ├── main.py                  # API Endpoints
+│   ├── database.py               # PostgreSQL connection
+│   ├── models.py                 # Database models
+│   ├── schemas.py                # Data schemas
+│   ├── requirements.txt          # Backend dependencies
+│
+│-- frontend/                   # Flask Frontend
+│   ├── static/
+│   │   ├── styles.css            # Custom CSS for UI
+│   │   ├── script.js             # JavaScript for interactivity
+│   ├── templates/
+│   │   ├── index.html            # Main dashboard UI
+│   ├── app.py                    # Flask server
+│   ├── requirements.txt          # Frontend dependencies
+│
+│-- spark_jobs/                  # Apache Spark Jobs
+│   ├── fraud_detection.py        # Spark processing logic
+│
+│-- README.md                    # Project Documentation
+│-- .gitignore                    # Git ignored files
 ```
 
 ---
 
-## 🛠️ Prerequisites
+## ⚙️ Setup Guide
 
-Ensure you have the following installed before proceeding:
-
-✅ **Python 3.8+**  
-✅ **Kafka (Confluent Cloud or Local Setup)**  
-✅ **Databricks Cluster** (For consumer processing)  
-✅ **Confluent Kafka Python Library**  
-
----
-
-## ⚙️ Configuration Setup
-
-Edit the `config.py` file inside the **config/** folder to match your setup.
-
-```python
-# Confluent Kafka Configuration
-KAFKA_CONFIG = {
-    "bootstrap.servers": "your-confluent-bootstrap-url:9092",
-    "security.protocol": "SASL_SSL",
-    "sasl.mechanisms": "PLAIN",
-    "sasl.username": "your-api-key",
-    "sasl.password": "your-api-secret",
-}
-
-KAFKA_TOPIC = "transactions"
-
-🔒 **Never hardcode sensitive credentials. Use `.env` or environment variables.**  
+### **1️⃣ Backend (FastAPI)**
+1. Navigate to the `backend` folder:
+   ```sh
+   cd backend
+   ```
+2. Create a virtual environment and activate it:
+   ```sh
+   python -m venv venv
+   source venv/bin/activate  # Mac/Linux
+   venv\Scripts\activate  # Windows
+   ```
+3. Install dependencies:
+   ```sh
+   pip install -r requirements.txt
+   ```
+4. Run the FastAPI backend:
+   ```sh
+   uvicorn main:app --reload
+   ```
 
 ---
 
-## 🚀 Running the Producer (Python)
-
-1️⃣ **Navigate to the producer folder**  
-```bash
-cd producer
-```
-
-2️⃣ **Install dependencies**  
-```bash
-pip install -r ../requirements.txt
-```
-
-3️⃣ **Run the producer**  
-```bash
-python producer.py
-```
-
-📌 **This script will send transaction data to Kafka every few seconds.**  
-
----
-
-## 🔥 Running the Consumer (Databricks)
-
-1️⃣ **Upload `consumer.py` to your Databricks workspace**  
-2️⃣ **Attach it to a Databricks cluster**  
-3️⃣ **Run the script in a notebook or as a job**  
-
-📌 **The consumer will read Kafka messages and process them in Databricks.**  
+### **2️⃣ Frontend (Flask)**
+1. Navigate to the `frontend` folder:
+   ```sh
+   cd frontend
+   ```
+2. Install dependencies:
+   ```sh
+   pip install -r requirements.txt
+   ```
+3. Run the Flask app:
+   ```sh
+   python app.py
+   ```
+4. Open your browser and go to:
+   ```
+   http://127.0.0.1:5000
+   ```
 
 ---
 
-## 🐛 Troubleshooting
-
-❌ **Producer not sending messages?**  
-✔️ Ensure Kafka is running:  
-```bash
-confluent login
-confluent kafka cluster list
-confluent kafka topic list
-```
-✔️ Verify your **Kafka topic exists**:  
-```bash
-confluent kafka topic describe transactions
-```
-
-❌ **Databricks not receiving messages?**  
-✔️ Check if the consumer script is properly consuming from Kafka by running it manually in Databricks.
-
+### **3️⃣ Database Setup (PostgreSQL on AWS RDS)**
+1. Create an **AWS RDS PostgreSQL** instance  
+2. Add inbound security rules to allow connections  
+3. Update `config.py` with the correct **RDS endpoint, username, and password**  
+4. Run the rds_Setup.sql script on IDE/terminal to create the fraud table:
 
 ---
 
-## 💡 Contributing
-
-🚀 Contributions are welcome! Feel free to submit a **pull request** or open an **issue** if you find any bugs or have feature requests.
-
----
-
-## 👨‍💻 Author
-
-👤 **Kulvinder Singh**  
-🔗 [GitHub Profile](https://github.com/Kulvinder810)  
-✉️ Contact: kuls810@gmail.com  
+### **4️⃣ Streaming Data from Kafka to Spark**
+1. Start the Kafka producer to send data to the topic  
+2. Run the Spark job to process the stream:
+   ```sh
+   spark-submit fraud_detection.py
+   ```
 
 ---
 
-### 🎉 **Happy Coding! 🚀🔥**
+## 📊 Visualization Dashboard
+
+The frontend displays:  
+📌 **Top 10 Fraud Locations Bar Chart**  
+📌 **Paginated Fraud Table with Search**  
+📌 **Real-time Fraud Monitoring**
+
+---
+
+## 🛠️ Tech Stack
+
+- **Backend:** FastAPI, PostgreSQL (AWS RDS)
+- **Frontend:** Flask, Chart.js, Bootstrap
+- **Streaming & Processing:** Confluent Kafka, Apache Spark (Databricks)
+- **Database:** PostgreSQL
+
+---
+
+## 🤝 Contributing
+
+1. Fork the repo  
+2. Create a new branch (`feature-branch`)  
+3. Commit changes & push  
+4. Open a PR 🚀  
+
+---
+
+
